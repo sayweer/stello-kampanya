@@ -1,0 +1,5 @@
+# pnpm holds back packages published within the last day as a supply-chain
+# measure. stello-sdk is this project's own dependency, released alongside it,
+# so waiting out that cooldown would only block a fresh install.
+minimumReleaseAgeExclude:
+  - stello-sdk@0.1.0

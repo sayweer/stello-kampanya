@@ -48,7 +48,7 @@ Everything specific to the campaign lives in `contracts/campaign` and `lib/campa
 ## Running it
 
 ```bash
-pnpm install          # installs stello-sdk from vendor/
+pnpm install          # pulls stello-sdk from npm
 pnpm dev              # http://localhost:3001
 
 cargo test            # 21 contract tests
@@ -57,7 +57,7 @@ stellar contract build
 
 `NEXT_PUBLIC_STELLO_RELAY_URL` points at Stello's relay so a pledge lands without waiting for its next pass. This app never holds the landing account's key.
 
-To upgrade the SDK, drop a newer `stello-sdk-<version>.tgz` into `vendor/` and update `package.json`. Once the package is on npm, this becomes `pnpm add stello-sdk`.
+The SDK is an ordinary registry dependency — [`stello-sdk`](https://www.npmjs.com/package/stello-sdk) — so this app needs no path to the Stello repository. Upgrade it with `pnpm add stello-sdk@latest`.
 
 ## On testnet
 

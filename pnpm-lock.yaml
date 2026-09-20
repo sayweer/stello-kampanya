@@ -30,8 +30,8 @@ importers:
         specifier: ^19.3.0
         version: 19.3.0(react@19.3.0)
       stello-sdk:
-        specifier: file:./vendor/stello-sdk-0.1.0.tgz
-        version: file:vendor/stello-sdk-0.1.0.tgz(debug@4.4.3)
+        specifier: ^0.1.0
+        version: 0.1.0(debug@4.4.3)
     devDependencies:
       '@types/node':
         specifier: ^24.0.0
@@ -574,9 +574,8 @@ packages:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
-  stello-sdk@file:vendor/stello-sdk-0.1.0.tgz:
-    resolution: {integrity: sha512-V8hUu6DUxHgvnoMuailFZY/mXpYLjtae/nLH9wQ6ComJv8tEgYOZFhplYqv1s69toCYzaIzQf535BP9CZuCgfA==, tarball: file:vendor/stello-sdk-0.1.0.tgz}
-    version: 0.1.0
+  stello-sdk@0.1.0:
+    resolution: {integrity: sha512-1GLuN7SknZY97RsrwEwvat6ziIpIkyzOtP2Pe88izFCJrhxG2RfPJA+BRvsbf7wn3bJvb5F+taYK916/bRVjgw==}
     engines: {node: '>=22.12.0'}
 
   styled-jsx@5.1.6:
@@ -1052,7 +1051,7 @@ snapshots:
 
   source-map-js@1.2.1: {}
 
-  stello-sdk@file:vendor/stello-sdk-0.1.0.tgz(debug@4.4.3):
+  stello-sdk@0.1.0(debug@4.4.3):
     dependencies:
       '@stellar/stellar-sdk': 17.1.0(debug@4.4.3)
       buffer: 6.0.3
