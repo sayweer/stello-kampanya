@@ -1,0 +1,70 @@
+/* Inner-app nav — mirrors the landing nav's floating-pill language. */
+.anav{
+  position:fixed; top:16px; left:50%; transform:translateX(-50%); z-index:1000;
+  width:min(1100px, 94vw);
+  display:flex; align-items:center; gap:16px;
+  padding:8px 9px 8px 15px;
+  border:1px solid rgba(255,255,255,0.10); border-radius:100px;
+  background:rgba(10,10,14,0.6);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  color:#EDEDF4;
+}
+.anav__brand{
+  display:flex; align-items:center; gap:9px; flex:0 0 auto;
+  background:none; border:none; padding:0; cursor:pointer;
+  color:#F3F1EC; font-family:'Fraunces', Georgia, serif; font-weight:600; font-size:18px;
+}
+.anav__glyph{
+  width:24px; height:24px; border-radius:6px;
+  background:url('/favicon.png') center/cover no-repeat;
+  box-shadow:0 2px 12px rgba(0,0,0,.45);
+}
+.anav__tabs{ display:flex; align-items:center; gap:4px; margin-left:auto; }
+.anav__tab{
+  background:none; border:none; cursor:pointer;
+  font-size:13px; font-weight:600; padding:7px 12px; border-radius:100px;
+  color:#A0A0B8; transition:color .2s ease, background .2s ease; font-family:inherit;
+}
+.anav__tab:hover{ color:#EDEDF4; }
+.anav__tab.is-active{ background:rgba(124,58,237,0.22); color:#EDEDF4; }
+.anav__cta{
+  flex:0 0 auto; padding:8px 15px; border-radius:100px; border:none; cursor:pointer;
+  background:#FDDA24; color:#0F0F0F; font-weight:600; font-size:12.5px; font-family:inherit;
+  transition:transform .2s ease, filter .2s ease, box-shadow .2s ease;
+}
+.anav__cta:hover{ transform:translateY(-1px); filter:brightness(1.08); box-shadow:0 10px 26px -10px #FDDA24; }
+/* Ghost variant — for the landing nav, where "Open app" stays the one primary CTA. */
+.anav__cta--ghost{ background:rgba(255,255,255,0.05); color:#EDEDF4; border:1px solid rgba(255,255,255,0.14); }
+.anav__cta--ghost:hover{ transform:none; filter:none; box-shadow:none; background:rgba(255,255,255,0.09); }
+.anav__wallet{ position:relative; flex:0 0 auto; }
+.anav__chip{
+  display:inline-flex; align-items:center; gap:7px;
+  padding:8px 13px; border-radius:100px; cursor:pointer;
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.14);
+  color:#EDEDF4; font-family:ui-monospace, monospace; font-size:12.5px;
+  transition:background .2s ease;
+}
+.anav__chip:hover{ background:rgba(255,255,255,0.09); }
+.anav__dot{ width:7px; height:7px; border-radius:50%; background:#00FF43; box-shadow:0 0 8px #00FF43; }
+.anav__menu{
+  position:absolute; right:0; top:calc(100% + 8px); min-width:172px; padding:6px;
+  border-radius:12px; background:rgba(14,14,20,0.96);
+  border:1px solid rgba(255,255,255,0.10);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 16px 40px -12px rgba(0,0,0,0.7);
+}
+.anav__menu button{
+  display:block; width:100%; text-align:left; cursor:pointer;
+  background:none; border:none; padding:9px 11px; border-radius:8px;
+  color:#EDEDF4; font-size:13px; font-family:inherit;
+}
+.anav__menu button:hover{ background:rgba(255,255,255,0.07); }
+
+@media(max-width:640px){
+  .anav{ gap:8px; padding:7px 7px 7px 11px; }
+  .anav__name{ display:none; }         /* glyph-only brand on phones */
+  .anav__tab{ padding:6px 9px; font-size:12px; }
+  .anav__tab--wallet{ display:none; }  /* wallet view stays reachable via the chip menu */
+  .anav__cta{ padding:7px 11px; font-size:11.5px; }
+  .anav__chip{ padding:7px 10px; font-size:11.5px; }
+}

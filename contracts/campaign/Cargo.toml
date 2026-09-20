@@ -1,0 +1,20 @@
+[package]
+name = "stello-campaign"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["lib", "cdylib"]
+doctest = false
+
+[features]
+testutils = ["soroban-sdk/testutils"]
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[dev-dependencies]
+soroban-sdk = { workspace = true, features = ["testutils"] }
+# Test-only: the integration test registers the real router next to this contract.
+stello-router = { path = "../router", features = ["testutils"] }

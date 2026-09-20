@@ -1,0 +1,447 @@
+/* ============================================================================
+   App shell chrome — sidebar + topbar on desktop, top bar + bottom tabs on phones.
+
+   The product surface now speaks the landing's language: same cream, same ink,
+   same two meaning colours. A visitor who read the marketing page and then signs
+   in should not feel handed to a different company.
+
+   Hard rule carried over from the landing measurements: --green is FILL ONLY.
+   On cream it reads 1.84:1, so it can never carry text; anything written on top
+   of it is ink (6.31:1). --red works both ways (7.16:1 on cream).
+   ========================================================================== */
+
+.shell{
+  --bg: #ffffff;
+  --surface: #f5f5f2;
+  --ink: #0f0f0f;
+  --ink-2: #5c5c5c;
+  --green: #fdda24;
+  --red: #c4281c;
+  --line: rgba(15,15,15, 0.16);
+  --raise: rgba(15,15,15, 0.05);
+
+  --display: "Questrial", system-ui, sans-serif;
+  --body: "Geist", system-ui, -apple-system, sans-serif;
+  --code: ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  display:grid; grid-template-columns:236px 1fr; min-height:100vh;
+  background:var(--bg); color:var(--ink);
+  font-family:var(--body);
+}
+
+:root[data-theme="dark"] .shell{
+  --bg: #0f0f0f;
+  --surface: #1c1c1c;
+  --ink: #ffffff;
+  --ink-2: #a3a3a3;
+  --line: rgba(255,255,255,0.18);
+  --raise: rgba(255,255,255,0.07);
+}
+
+.shell ::selection{ background:var(--green); color:#0f0f0f; }
+
+/* Form fields inherit nothing by default — not the body face, not a size. They were rendering
+ * in the system font at the browser's own default, which on iOS is under the 16px threshold:
+ * tapping any field zoomed the page in, and the zoomed viewport is what "exploded" the layout.
+ * Anything below 16px triggers it, so on narrow screens that is the floor. */
+.shell input,
+.shell textarea,
+.shell select{ font-family:var(--body); font-size:15px; color:var(--ink); }
+
+@media(max-width:1023px){
+  .shell input,
+  .shell textarea,
+  .shell select{ font-size:16px; }
+}
+
+/* ---- sidebar ------------------------------------------------------------------ */
+.shell__side{
+  position:sticky; top:0; height:100vh; display:flex; flex-direction:column;
+  padding:22px 14px 16px;
+  border-right:1px solid var(--line);
+  background:var(--surface);
+}
+.shell__brand{
+  display:flex; align-items:center; gap:9px; margin:2px 6px 24px;
+  background:none; border:none; padding:0; cursor:pointer;
+  color:var(--ink); font-family:var(--display); font-size:19px; letter-spacing:-0.01em;
+}
+.shell__glyph{
+  width:24px; height:24px; border-radius:6px;
+  background:url('/favicon.svg') center/cover no-repeat;
+}
+.shell__nav{ display:flex; flex-direction:column; gap:2px; }
+.shell__item{
+  position:relative; display:flex; align-items:center; gap:10px; text-align:left;
+  background:none; border:none; cursor:pointer; width:100%;
+  padding:9px 12px; border-radius:9px;
+  color:var(--ink-2); font-size:13.5px; font-weight:500; font-family:inherit;
+  transition:color .18s ease, background .18s ease;
+}
+.shell__item:hover{ color:var(--ink); background:var(--raise); }
+.shell__item.is-active{ color:var(--ink); background:var(--raise); font-weight:600; }
+.shell__item.is-active::before{
+  content:""; position:absolute; left:0; top:8px; bottom:8px; width:3px;
+  border-radius:2px; background:var(--green);
+}
+.shell__icon{ width:16px; text-align:center; font-size:13px; opacity:.75; }
+
+.shell__foot{ margin-top:auto; display:flex; flex-direction:column; gap:10px; padding:0 6px; }
+.shell__demo{
+  background:none; border:none; padding:0; cursor:pointer; text-align:left;
+  color:var(--ink-2); font-size:12.5px; font-family:inherit;
+}
+.shell__demo:hover{ color:var(--ink); }
+.shell__demo.is-active{ color:var(--ink); font-weight:600; }
+.shell__testnet{
+  padding:9px 11px; border-radius:9px; font-size:11.5px; line-height:1.45;
+  color:var(--ink); background:var(--raise); border:1px solid var(--line);
+}
+.shell__docs{ color:var(--ink-2); font-size:12.5px; text-decoration:none; }
+.shell__docs:hover{ color:var(--ink); }
+
+/* ---- main column -------------------------------------------------------------- */
+.shell__main{ display:flex; flex-direction:column; min-width:0; }
+.shell__top{
+  position:sticky; top:0; z-index:900;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 22px;
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+}
+.shell__content{ flex:1; padding:26px 26px 40px; max-width:1180px; width:100%; margin:0 auto; box-sizing:border-box; }
+
+/* ---- treasury switcher --------------------------------------------------------- */
+.tswitch{ position:relative; }
+.tswitch__chip{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:7px 12px; border-radius:9px; cursor:pointer;
+  background:var(--surface); border:1px solid var(--line);
+  color:var(--ink); font-family:var(--code); font-size:12.5px;
+  transition:background .18s ease;
+}
+.tswitch__chip:hover{ background:var(--raise); }
+.tswitch__caret{ font-size:10px; color:var(--ink-2); }
+.tswitch__menu{
+  position:absolute; left:0; top:calc(100% + 8px); min-width:280px; padding:6px;
+  border-radius:12px; background:var(--surface);
+  border:1px solid var(--line);
+  box-shadow:0 16px 40px -18px rgba(15,15,15,0.35); z-index:1200;
+}
+.tswitch__row{
+  display:flex; align-items:center; gap:8px; width:100%;
+  background:none; border:none; cursor:pointer; text-align:left;
+  padding:9px 10px; border-radius:8px;
+  color:var(--ink); font-family:var(--code); font-size:12.5px;
+}
+.tswitch__row:hover{ background:var(--raise); }
+.tswitch__row .is-unreg{ color:var(--ink-2); font-size:11px; font-family:var(--body); }
+.tswitch__row .is-current{ color:var(--ink); font-weight:600; }
+.tswitch__forget{
+  background:none; border:none; cursor:pointer; padding:2px 6px;
+  color:var(--ink-2); font-size:11px; border-radius:6px; opacity:0; transition:opacity .15s ease;
+}
+.tswitch__row:hover .tswitch__forget{ opacity:1; }
+.tswitch__forget:hover{ color:var(--red); }
+.tswitch__new{
+  margin-top:4px; border-top:1px solid var(--line); border-radius:0 0 8px 8px;
+  color:var(--ink); font-family:var(--body); font-weight:600;
+}
+
+/* ---- the hero: what the rules did ---------------------------------------------
+   This page has one job and it is not reporting a balance. Every row is one
+   decision the contract made, and the stripe on its left is the decision itself —
+   the same device the landing uses for allowed and rejected cards. */
+.rules{ display:flex; flex-direction:column; }
+.rules__head{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  margin-bottom:14px;
+}
+.rules__title{
+  font-family:var(--display); font-size:31px; letter-spacing:-0.015em; color:var(--ink);
+}
+.rules__count{ font-size:12.5px; color:var(--ink-2); }
+.rules__list{ display:flex; flex-direction:column; gap:6px; }
+.rules__row{
+  position:relative; overflow:hidden;
+  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:12px;
+  padding:15px 16px; border-radius:0 11px 11px 0;
+  border-left:5px solid var(--line);
+  background:var(--surface);
+}
+.rules__row--ok{ border-left-color:var(--green); }
+.rules__row--blocked{
+  border-left-color:var(--red);
+  background:color-mix(in oklab, var(--red) 13%, var(--surface));
+}
+.rules__what{ min-width:0; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.rules__verb{ font-family:var(--display); font-size:17px; color:var(--ink); }
+.rules__why{ font-size:13px; color:var(--ink-2); min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.rules__meta{ display:flex; align-items:center; gap:12px; flex:0 0 auto; }
+.rules__when{ font-size:12px; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+.rules__tx{ color:var(--ink-2); text-decoration:none; font-size:13px; }
+.rules__tx:hover{ color:var(--ink); }
+.rules__empty{
+  padding:28px 18px; border-radius:11px; border:1px dashed var(--line);
+  color:var(--ink-2); font-size:13.5px; line-height:1.6;
+}
+.rules__all{
+  align-self:flex-start; margin-top:12px;
+  background:none; border:none; padding:0; cursor:pointer;
+  color:var(--ink-2); font-size:12.5px; font-family:inherit; text-decoration:underline;
+  text-underline-offset:3px;
+}
+.rules__all:hover{ color:var(--ink); }
+
+/* ---- the workspace ------------------------------------------------------------
+   Two columns, not a stack of full-width blocks. The left one carries the treasury and
+   then what its rules did; the right one answers the questions you ask about those
+   decisions — how much of today is left, who may be paid, how the week went. Every cell
+   has a different job, so nothing is filler. */
+.ov__grid{
+  display:grid;
+  grid-template-columns:minmax(0,8fr) minmax(0,4fr);
+  /* Named areas rather than auto-placement: the rules column is the tallest thing on the
+     page and its height changes with the feed, so left to flow, the week chart dropped
+     under it into the left column and left the right one half empty. */
+  grid-template-areas:
+    "treasury today"
+    "rules    payees"
+    "rules    week";
+  grid-template-rows:auto auto 1fr;
+  gap:16px;
+  align-items:start;
+}
+.ov__card--treasury{ grid-area:treasury; }
+.ov__card--today{ grid-area:today; }
+.ov__rules{ grid-area:rules; min-width:0; }
+.ov__card--payees{ grid-area:payees; }
+.ov__card--week{ grid-area:week; }
+.ov__cardhead{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.ov__count{ font-family:var(--display); font-size:20px; color:var(--ink); }
+.ov__empty{ font-size:13px; color:var(--ink-2); line-height:1.6; margin:12px 0 0; }
+.ov__payees{ list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.ov__payees a{
+  font-family:var(--code); font-size:13px; color:var(--ink); text-decoration:none;
+  display:block; padding:8px 10px; border-radius:8px; background:var(--bg); border:1px solid var(--line);
+}
+.ov__payees a:hover{ border-color:var(--ink-2); }
+.ov__btn--full{ width:100%; margin-top:14px; text-align:center; }
+
+.ov__weekline{
+  display:flex; gap:16px; margin-top:14px; font-size:12.5px; color:var(--ink-2);
+}
+.ov__weekline span{ display:inline-flex; align-items:center; gap:6px; }
+.ov__key{ width:9px; height:9px; border-radius:3px; display:inline-block; }
+.ov__key--ok{ background:var(--green); }
+.ov__key--blocked{ background:var(--red); }
+
+/* ---- the shared page shape -----------------------------------------------------
+   Every page in the app is a wide working column beside a narrower one that carries the
+   context you need while working in it: who you may pay while sending a payment, what the
+   limits are while changing them. Overview declares its own areas because its rules column
+   spans two rows; the rest use this. */
+.page{
+  display:grid;
+  grid-template-columns:minmax(0,8fr) minmax(0,4fr);
+  gap:16px;
+  align-items:start;
+  /* Room under the last panel for the feedback pill, which floats in the bottom-right
+     corner: without it the pill sits on whatever ends the aux column — on the Agent page
+     that is the "Approve payee" button of a pending request. */
+  padding-bottom:72px;
+}
+.page__main,.page__side{ display:flex; flex-direction:column; gap:16px; min-width:0; }
+
+/* ---- charts -------------------------------------------------------------------- */
+.chart--spark{ width:132px; height:34px; overflow:visible; }
+.chart__radial{ position:relative; width:132px; margin:16px auto 4px; }
+.chart__radial svg{ width:100%; display:block; }
+.chart__radial-mid{
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:2px; text-align:center;
+}
+.chart__radial-mid strong{ font-family:var(--display); font-size:24px; color:var(--ink); font-weight:400; }
+.chart__radial-mid span{ font-size:11px; color:var(--ink-2); }
+
+.chart__bars{ display:flex; align-items:flex-end; gap:7px; height:96px; margin-top:16px; }
+.chart__col{ flex:1; display:flex; flex-direction:column; align-items:center; gap:7px; height:100%; justify-content:flex-end; }
+.chart__stack{
+  width:100%; min-height:3px; display:flex; flex-direction:column-reverse;
+  border-radius:4px; overflow:hidden; background:var(--line);
+}
+.chart__seg{ display:block; width:100%; }
+.chart__seg--ok{ background:var(--green); }
+.chart__seg--blocked{ background:var(--red); }
+.chart__tick{ font-size:10.5px; color:var(--ink-2); }
+
+/* kept for the tier used elsewhere */
+.ov__tier{ display:grid; grid-template-columns:minmax(0,7fr) minmax(0,5fr); gap:16px; margin-top:26px; }
+.ov__card{
+  padding:20px 22px; border-radius:14px;
+  background:var(--surface); border:1px solid var(--line);
+  display:flex; flex-direction:column;
+}
+.ov__label{
+  font-size:11px; text-transform:uppercase; letter-spacing:0.09em; color:var(--ink-2);
+}
+.ov__balance{
+  font-family:var(--display); font-size:56px; letter-spacing:-0.025em; line-height:1.02;
+  color:var(--ink); margin-top:10px;
+}
+.ov__balance small{ font-size:17px; color:var(--ink-2); font-family:var(--body); margin-left:8px; }
+.ov__chips{ display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+.ov__chip{
+  font-size:12px; padding:4px 10px; border-radius:100px;
+  border:1px solid var(--line); color:var(--ink-2); background:var(--bg);
+}
+.ov__chip--live{ color:var(--ink); border-color:var(--green); }
+.ov__chip--paused{ color:var(--red); border-color:var(--red); }
+.ov__idrow{ display:flex; align-items:center; gap:10px; margin-top:16px; }
+.ov__id{ font-family:var(--code); font-size:13px; color:var(--ink-2); text-decoration:none; }
+.ov__id:hover{ color:var(--ink); }
+.ov__copy{
+  padding:3px 9px; border-radius:7px; font-size:11.5px; cursor:pointer; font-family:inherit;
+  background:transparent; border:1px solid var(--line); color:var(--ink-2);
+}
+.ov__copy:hover{ color:var(--ink); border-color:var(--ink-2); }
+
+.ov__track{
+  height:10px; border-radius:100px; background:var(--bg);
+  border:1px solid var(--line); margin-top:14px; overflow:hidden;
+}
+.ov__fill{ height:100%; background:var(--green); }
+.ov__spent{ font-family:var(--display); font-size:22px; color:var(--ink); margin-top:14px; }
+.ov__rule{ font-size:13px; color:var(--ink-2); margin-top:8px; }
+.ov__rule strong{ color:var(--ink); font-weight:500; }
+
+/* ---- actions -------------------------------------------------------------------- */
+.ov__actions{ display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+.ov__btn{
+  padding:11px 18px; border-radius:11px; cursor:pointer; font-size:14px; font-family:inherit;
+  border:1px solid var(--ink); background:var(--ink); color:var(--bg); font-weight:500;
+  transition:opacity .16s ease;
+}
+.ov__btn:hover{ opacity:.86; }
+.ov__btn--ghost{ background:transparent; color:var(--ink); }
+.ov__btn--ghost:hover{ background:var(--raise); opacity:1; }
+.ov__btn:disabled{ opacity:.5; cursor:default; }
+
+.ov__panel{
+  display:flex; gap:10px; align-items:flex-start; margin-top:12px; flex-wrap:wrap;
+  padding:14px; border-radius:12px; background:var(--surface); border:1px solid var(--line);
+}
+.ov__input{
+  flex:1; min-width:180px; box-sizing:border-box; padding:11px 13px; border-radius:10px;
+  background:var(--bg); border:1px solid var(--line); color:var(--ink); font-family:inherit;
+  font-size:14px;
+}
+.ov__input:focus{ outline:2px solid var(--green); outline-offset:1px; }
+.ov__err{ width:100%; font-size:12.5px; color:var(--red); }
+
+/* ---- one-line nudge (replaces the five-step strip once a treasury exists) -------- */
+.ov__next{
+  display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  margin-bottom:20px; padding:12px 16px; border-radius:11px;
+  background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--green);
+  font-size:13.5px; line-height:1.5;
+}
+.ov__notice{
+  margin-bottom:16px; padding:12px 15px; border-radius:11px; font-size:13px; line-height:1.55;
+  background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--red);
+  color:var(--ink);
+}
+.ov__notice button{
+  background:none; border:none; padding:0; cursor:pointer; font:inherit;
+  color:var(--ink); text-decoration:underline; text-underline-offset:3px;
+}
+
+/* ---- shared chrome borrowed from the landing nav ------------------------------
+   WalletChip ships its own dark-surface styling (appnav.css) because it also sits on the
+   marketing page. Inside the shell it has to speak the shell's palette, so the colours are
+   re-pointed at the tokens here rather than forked into a second component. */
+.shell .anav__chip{
+  background:var(--surface); border:1px solid var(--line); color:var(--ink);
+  font-family:var(--code);
+}
+.shell .anav__chip:hover{ background:var(--raise); }
+.shell .anav__dot{ background:var(--green); box-shadow:none; }
+.shell .anav__cta{ background:var(--ink); color:var(--bg); }
+.shell .anav__cta--ghost{
+  background:transparent; color:var(--ink); border:1px solid var(--line);
+}
+.shell .anav__cta--ghost:hover{ background:var(--raise); }
+.shell .anav__menu{
+  background:var(--surface); border:1px solid var(--line);
+  box-shadow:0 16px 40px -18px rgba(15,15,15,0.35);
+}
+/* the menu's items are plain <button>s (appnav.css paints them for the dark landing nav);
+   inside the shell they have to write in ink or they vanish on the cream menu */
+.shell .anav__menu button{ color:var(--ink); }
+.shell .anav__menu button:hover{ background:var(--raise); }
+
+/* skeleton pulse for loading states */
+@keyframes shellPulse{ 0%,100%{ opacity:.5; } 50%{ opacity:.2; } }
+.shell__skel{ border-radius:10px; background:var(--raise); animation:shellPulse 1.6s ease-in-out infinite; }
+
+@media(prefers-reduced-motion: reduce){
+  .shell__skel{ animation:none; }
+}
+
+@media(max-width:1023px){
+  .ov__grid{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:none;
+    grid-template-rows:none;
+  }
+  .ov__card--treasury,.ov__card--today,.ov__rules,.ov__card--payees,.ov__card--week{ grid-area:auto; }
+  .page{ grid-template-columns:minmax(0,1fr); }
+  .ov__tier{ grid-template-columns:minmax(0,1fr); }
+  .ov__balance{ font-size:42px; }
+  .rules__title{ font-size:22px; }
+  /* Decisions before the side panels: on a narrow screen the column order becomes reading
+     order, and the rules are still the subject. */
+  .ov__rules{ order:-1; }
+}
+
+/* ---- mobile ------------------------------------------------------------------- */
+.shell__tabs{ display:none; }
+
+@media(max-width:1023px){
+  .shell{ grid-template-columns:1fr; }
+  .shell__side{ display:none; }
+  .shell__top{ padding:10px 14px; }
+  .shell__content{ padding:18px 14px 96px; } /* bottom-bar clearance */
+  .shell__tabs{
+    position:fixed; left:0; right:0; bottom:0; z-index:1000;
+    display:flex; justify-content:space-around; align-items:stretch;
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+    background:var(--surface);
+    border-top:1px solid var(--line);
+  }
+  .shell__tab{
+    display:flex; flex-direction:column; align-items:center; gap:3px; flex:1;
+    background:none; border:none; cursor:pointer; padding:6px 2px;
+    color:var(--ink-2); font-size:10.5px; font-weight:600; font-family:inherit;
+  }
+  .shell__tab .shell__icon{ font-size:16px; width:auto; }
+  .shell__tab.is-active{ color:var(--ink); }
+  .tswitch__chip{ padding:6px 9px; font-size:11.5px; }
+  .tswitch__menu{ min-width:240px; }
+  /* The feedback FAB is a marketing-page affordance. Inside the app on a phone it is a
+     full-width-ish pill floating over the content you are trying to read — it sat on top of
+     the treasury card. Here it becomes a small round mark above the tab bar: still reachable,
+     no longer competing with the page. */
+  body:has(.shell) .feedback-fab{
+    bottom:calc(78px + env(safe-area-inset-bottom)) !important;
+    right:14px;
+    width:42px; height:42px; padding:0; border-radius:50%;
+    display:grid; place-items:center;
+    /* font-size:0 shrinks the label to nothing but does not stop it wrapping out of a
+       42px box — a stray "fe" showed under the circle. overflow clips what is left. */
+    font-size:0; overflow:hidden; line-height:0;
+  }
+  body:has(.shell) .feedback-fab::before{
+    content:"✎"; font-size:18px; line-height:1;
+  }
+}
