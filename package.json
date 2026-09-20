@@ -2,6 +2,7 @@
   "name": "stello-kampanya",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.24.0",
   "description": "Ya olur ya kazanırsın — a dominant assurance campaign that people join by bank transfer, built on stello-sdk.",
   "type": "module",
   "scripts": {
