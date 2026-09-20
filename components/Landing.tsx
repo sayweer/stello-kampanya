@@ -2,7 +2,7 @@
 
 // Landing — the marketing surface. Structure, classes and motion are carried over from the
 // reference one to one; only the words, the doors and the numbers belong to Stello.
-import { useCampaignList, useWallet } from "@/lib/hooks.ts";
+import { useCampaignList, useWallet } from "@/lib/hooks";
 import { useReveal } from "./landing/useReveal";
 import Hero from "./landing/Hero";
 import Proof from "./landing/Proof";

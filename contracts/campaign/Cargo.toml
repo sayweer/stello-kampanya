@@ -16,5 +16,5 @@ soroban-sdk = { workspace = true }
 
 [dev-dependencies]
 soroban-sdk = { workspace = true, features = ["testutils"] }
-# Test-only: the integration test registers the real router next to this contract.
-stello-router = { path = "../router", features = ["testutils"] }
+# The integration test registers Stello's router from its compiled wasm
+# (contracts/campaign/router.wasm) — no source dependency on the layer.

@@ -1,4 +1,5 @@
-import { fromStroops, Status, type CampaignView } from "@stello/core";
+import { fromStroops } from "stello-sdk";
+import { Status, type CampaignView } from "@/lib/campaign";
 
 /** "12.5" rather than "12.5000000"; two decimals is what a person reads as money. */
 export function fmtUsdc(stroops: bigint): string {

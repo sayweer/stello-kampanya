@@ -1,12 +1,12 @@
 "use client";
 
-import { campaignView, listCampaigns, type CampaignView, type StepName } from "@stello/core";
+import { campaignView, listCampaigns, type CampaignView, type StepName } from "./campaign";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getOrCreateKeypair, loadKeypair } from "./wallet.ts";
 
 /**
- * Thin data layer. All the product logic lives in @stello/core; these hooks
+ * Thin data layer. The campaign logic lives in lib/campaign and the payment rail in stello-sdk; these hooks
  * only decide when to call it and what the screen knows while it runs.
  */
 

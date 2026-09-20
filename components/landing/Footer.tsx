@@ -1,4 +1,5 @@
-import { config, fromStroops, type CampaignView } from "@stello/core";
+import { config, fromStroops } from "stello-sdk";
+import { campaignConfig, type CampaignView } from "@/lib/campaign";
 
 import StelloMark from "../StelloMark";
 
@@ -9,7 +10,7 @@ const REPO = "https://github.com/sayweer/stello";
  *  chain" has to say where to check. */
 const ON_CHAIN = [
   { label: "Yönlendirici kontrat", id: config.routerId },
-  { label: "Kampanya kontratı", id: config.campaignId },
+  { label: "Kampanya kontratı", id: campaignConfig.campaignId },
   { label: "İniş hesabı", id: config.landing, kind: "account" },
 ];
 

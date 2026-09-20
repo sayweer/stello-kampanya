@@ -4,7 +4,7 @@
 // topbar carrying the account this browser is using. Pages render inside.
 import type { ReactNode } from "react";
 
-import { useWallet } from "@/lib/hooks.ts";
+import { useWallet } from "@/lib/hooks";
 import { shortAddr } from "./format";
 
 export type AppPage = "campaigns" | "new";

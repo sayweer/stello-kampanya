@@ -500,7 +500,12 @@ fn rejected_deposits_report_a_reason() {
 /// relayer's account all the way to a pledger's refund.
 #[test]
 fn router_and_campaign_run_a_full_round() {
-    use stello_router::{Router, RouterClient};
+    // The router is another team's contract, so the test uses its compiled
+    // interface rather than its source — exactly what an integrating app has.
+    mod stello_router {
+        soroban_sdk::contractimport!(file = "router.wasm");
+    }
+    use stello_router::{Client as RouterClient, WASM as ROUTER_WASM};
 
     let env = Env::default();
     env.mock_all_auths();
@@ -511,7 +516,7 @@ fn router_and_campaign_run_a_full_round() {
     let organizer = Address::generate(&env);
     let user = Address::generate(&env);
 
-    let router_id = env.register(Router, (relayer.clone(), usdc.clone()));
+    let router_id = env.register(ROUTER_WASM, (relayer.clone(), usdc.clone()));
     let campaign_id = env.register(Campaigns, (router_id.clone(), usdc.clone()));
     let router = RouterClient::new(&env, &router_id);
     let campaigns = CampaignsClient::new(&env, &campaign_id);

@@ -2,12 +2,13 @@
 
 // The organizer's side: name the thing, set the goal and the deadline, and lock the bonus that
 // makes the promise worth believing.
-import { createCampaign, ensureReady, fundBonus, toStroops, type StepName } from "@stello/core";
+import { toStroops } from "stello-sdk";
+import { createCampaign, ensureReady, fundBonus, type StepName } from "@/lib/campaign";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
-import { useFlow, useWallet } from "@/lib/hooks.ts";
-import { triggerRelay } from "@/lib/wallet.ts";
+import { useFlow, useWallet } from "@/lib/hooks";
+import { triggerRelay } from "@/lib/wallet";
 
 const EASE = [0.2, 0.7, 0.3, 1] as const;
 

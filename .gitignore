@@ -1,0 +1,18 @@
+# Rust / Soroban
+/target/
+contracts/*/test_snapshots/
+
+# Node
+node_modules/
+.next/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Stellar CLI identities (contains secret keys)
+.stellar-cfg/
+
+# macOS
+.DS_Store

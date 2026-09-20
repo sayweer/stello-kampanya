@@ -1,6 +1,7 @@
 "use client";
 
-import { fromStroops, type CampaignView } from "@stello/core";
+import { fromStroops } from "stello-sdk";
+import type { CampaignView } from "@/lib/campaign";
 
 import Words from "./Words";
 import { useTheme } from "./useTheme";

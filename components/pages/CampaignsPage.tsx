@@ -2,10 +2,10 @@
 
 // Campaigns — the first screen inside the app. Laid out like the reference's Overview: one
 // loud verdict at the top, the full ledger under it, the rules in the side column.
-import { config } from "@stello/core";
+import { campaignConfig } from "@/lib/campaign";
 import { motion } from "framer-motion";
 
-import { useCampaignList } from "@/lib/hooks.ts";
+import { useCampaignList } from "@/lib/hooks";
 import { fmtUsdc, shortAddr, timeLeft, verdictOf } from "../shell/format";
 
 const EASE = [0.2, 0.7, 0.3, 1] as const;
@@ -185,11 +185,11 @@ export default function CampaignsPage({
             <a
               className="linkbtn"
               style={{ whiteSpace: "nowrap" }}
-              href={`${EXPLORER}/contract/${config.campaignId}`}
+              href={`${EXPLORER}/contract/${campaignConfig.campaignId}`}
               target="_blank"
               rel="noreferrer"
             >
-              {shortAddr(config.campaignId)} ↗
+              {shortAddr(campaignConfig.campaignId)} ↗
             </a>
           </div>
           <div className="panel__kv">

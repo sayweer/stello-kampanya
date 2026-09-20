@@ -44,11 +44,18 @@ export function forgetKeypair(): void {
   }
 }
 
-/** Nudges the serverless relay; failures are not fatal, the loop retries. */
+/**
+ * Nudges Stello's hosted relay so a pledge lands without waiting for its next
+ * pass. This app never holds the landing key — the relay runs on Stello's side,
+ * and its origin must allow ours. Failures are not fatal: the relay's own loop
+ * picks the payment up anyway.
+ */
 export async function triggerRelay(): Promise<void> {
+  const url = process.env.NEXT_PUBLIC_STELLO_RELAY_URL;
+  if (!url) return;
   try {
-    await fetch("/api/relay", { method: "POST" });
+    await fetch(url, { method: "POST", mode: "cors" });
   } catch {
-    // The standalone relayer will pick the payment up on its next pass.
+    // Offline, blocked by CORS, or the relay is down — the loop still has it.
   }
 }

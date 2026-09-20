@@ -3,20 +3,20 @@
 // One campaign: where it stands, what you would get, and the door in. The join flow never
 // leaves this page — the participant sees an IBAN and a reference code, nothing about chains.
 import {
+  campaignConfig,
   claimAndWithdraw,
-  config,
   confirmDemoTransfer,
   startJoin,
   Status,
   waitForDeposit,
   type JoinHandle,
   type StepName,
-} from "@stello/core";
+} from "@/lib/campaign";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
-import { useCampaign, useFlow, useWallet } from "@/lib/hooks.ts";
-import { triggerRelay } from "@/lib/wallet.ts";
+import { useCampaign, useFlow, useWallet } from "@/lib/hooks";
+import { triggerRelay } from "@/lib/wallet";
 import { fmtUsdc, shortAddr, timeLeft, verdictOf } from "../shell/format";
 
 const EASE = [0.2, 0.7, 0.3, 1] as const;
@@ -316,11 +316,11 @@ export default function CampaignPage({ id, onBack }: { id: bigint; onBack: () =>
             <a
               className="linkbtn"
               style={{ whiteSpace: "nowrap" }}
-              href={`${EXPLORER}/contract/${config.campaignId}`}
+              href={`${EXPLORER}/contract/${campaignConfig.campaignId}`}
               target="_blank"
               rel="noreferrer"
             >
-              {shortAddr(config.campaignId)} ↗
+              {shortAddr(campaignConfig.campaignId)} ↗
             </a>
           </div>
           <div className="panel__kv">
