@@ -1,25 +1,14 @@
+"use client";
+
+import { useCopy } from "@/lib/copy/context";
+
 /** Three steps, one sentence each — what the participant actually does. Staged as the
  *  reference's pinned scene: three lines arrive from alternating sides, split apart, scale
  *  down together, and only then does the copy fill in on scrub. */
-const STEPS = [
-  {
-    n: "01",
-    t: "Havaleni gönder",
-    d: "Kampanyanın IBAN'ına, sana özel açıklama koduyla. Kurulacak cüzdan yok, saklanacak kelime yok, önce alınacak kripto yok.",
-  },
-  {
-    n: "02",
-    t: "Zincirde yerini al",
-    d: "Para ulaştığı anda katılımın kontrata yazılır. Sayaç herkesin önünde akar; kimse listeyi elle tutmaz.",
-  },
-  {
-    n: "03",
-    t: "Ya olur ya kazanırsın",
-    d: "Hedef tutarsa iş olur. Tutmazsa paran ve bonustan payın hesabına döner — sen bir şey yapmadan.",
-  },
-];
 
 export default function HowItWorks() {
+  const { how } = useCopy();
+  const STEPS = how.steps;
   return (
     <section className="lp__section lp__divide lp__how" id="how">
       <div className="lp__scene" aria-hidden="true">
@@ -31,10 +20,8 @@ export default function HowItWorks() {
       </div>
 
       <div className="lp__in lp__how-copy">
-        <h2 className="lp__reveal--head">Nasıl çalışır</h2>
-        <p className="lp__lede lp__reveal">
-          Senin yaptığın tek şey bir havale. Gerisini kontrat takip eder.
-        </p>
+        <h2 className="lp__reveal--head">{how.title}</h2>
+        <p className="lp__lede lp__reveal">{how.lede}</p>
 
         <div className="lp__steps">
           {STEPS.map((s) => (
@@ -58,7 +45,7 @@ export default function HowItWorks() {
             target="_blank"
             rel="noreferrer"
           >
-            Nasıl kuruldu →
+            {how.link}
           </a>
         </p>
       </div>

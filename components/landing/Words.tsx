@@ -74,7 +74,13 @@ export default function Words({
       </span>,
     );
 
-    if (!punct) pushWords(rest, "b");
+    // The marked span emits no trailing space, and `pushWords` only ever puts one *after*
+    // a word — so without this the highlight runs straight into the next word
+    // ("kazanan senolursun."). Added only where the text really does continue after one.
+    if (!punct) {
+      if (/^\s/.test(rest)) parts.push(" ");
+      pushWords(rest, "b");
+    }
   } else {
     pushWords(text, "w");
   }

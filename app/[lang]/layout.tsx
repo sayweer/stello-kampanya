@@ -1,18 +1,36 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { notFound } from "next/navigation";
 
-import "./globals.css";
-import "./appnav.css";
-import "./landing.css";
-import "./shell.css";
-import "./ledger.css";
+import { LANGS, getCopy, isLang } from "@/lib/copy";
+import { LangProvider } from "@/lib/copy/context";
 
-export const metadata: Metadata = {
-  title: "Stello — hedef tutmazsa, kazanan sen olursun",
-  description:
-    "Banka havalesiyle katıl. Hedef tutmazsa paran ve bonustan payın kendiliğinden hesabına döner.",
-  icons: { icon: "/favicon.svg" },
-};
+import "../globals.css";
+import "../appnav.css";
+import "../landing.css";
+import "../shell.css";
+import "../ledger.css";
+
+export function generateStaticParams() {
+  return LANGS.map((lang) => ({ lang }));
+}
+export const dynamicParams = false;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLang(lang)) return {};
+  const { meta } = getCopy(lang);
+  return {
+    title: meta.title,
+    description: meta.description,
+    icons: { icon: "/favicon.svg" },
+    alternates: { languages: Object.fromEntries(LANGS.map((l) => [l, `/${l}`])) },
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -25,9 +43,18 @@ export const viewport: Viewport = {
    dropped the moment someone opened the app shell. Light is the brand default. */
 const themeScript = `try{var t=localStorage.getItem("stello-theme");if(t!=="dark"&&t!=="light")t="light";document.documentElement.setAttribute("data-theme",t);}catch(e){}`;
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  if (!isLang(lang)) notFound();
+
   return (
-    <html lang="tr" suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -43,7 +70,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>{children}</body>
+      <body>
+        <LangProvider lang={lang}>{children}</LangProvider>
+      </body>
     </html>
   );
 }

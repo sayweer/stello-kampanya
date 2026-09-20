@@ -6,6 +6,7 @@ import { campaignConfig } from "@/lib/campaign";
 import { motion } from "framer-motion";
 
 import { useCampaignList } from "@/lib/hooks";
+import { useCopy } from "@/lib/copy/context";
 import { fmtUsdc, shortAddr, timeLeft, verdictOf } from "../shell/format";
 
 const EASE = [0.2, 0.7, 0.3, 1] as const;
@@ -25,6 +26,8 @@ export default function CampaignsPage({
   onNew: () => void;
 }) {
   const campaigns = useCampaignList();
+  const c = useCopy();
+  const t = c.campaignsPage;
 
   // The one worth joining right now: open, live, and closest to its deadline.
   const featured =
@@ -51,14 +54,13 @@ export default function CampaignsPage({
         >
           <div style={{ fontSize: 40, color: "var(--ink)" }}>◭</div>
           <h1 className="panel__title" style={{ margin: 0, fontSize: 30, fontWeight: 500 }}>
-            Yeterli kişi çıkarsa olacak işler için.
+            {t.emptyTitle}
           </h1>
           <p className="panel__note" style={{ margin: 0, fontSize: 14.5 }}>
-            Hedefi ve süreyi koy, bonusu kilitle. Katılanlar yalnızca havale gönderir; tutmazsa
-            paraları ve bonus payları kendiliğinden döner.
+            {t.emptyNote}
           </p>
           <button className="btn btn--lg" onClick={onNew} type="button">
-            İlk kampanyayı aç
+            {t.emptyCta}
           </button>
         </div>
       </div>
@@ -72,33 +74,34 @@ export default function CampaignsPage({
           {featured ? (
             <>
               <div>
-                <div className="eyebrow">Şu an katılabileceğin · {timeLeft(featured.secondsLeft)} kaldı</div>
+                <div className="eyebrow">
+                  {t.featuredEyebrow} · {t.featuredLeft.replace("%t", timeLeft(featured.secondsLeft, c.format))}
+                </div>
                 <div className="verdict__line">
                   <span className="verdict__amount">
-                    {fmtUsdc(featured.total)} / {fmtUsdc(featured.goal)} USDC
+                    {fmtUsdc(featured.total, c.format.locale)} / {fmtUsdc(featured.goal, c.format.locale)} USDC
                   </span>
                 </div>
                 <div className="verdict__why">{featured.title}</div>
               </div>
               <div className="verdict__side">
-                <span className="pill pill--lg pill--ok">{featured.pledgers} kişi katıldı</span>
+                <span className="pill pill--lg pill--ok">
+                  {featured.pledgers} {t.peopleJoined}
+                </span>
                 <button className="btn" onClick={() => onOpen(featured.id)} type="button">
-                  Kampanyayı aç →
+                  {t.openCampaign}
                 </button>
               </div>
             </>
           ) : (
             <div>
-              <div className="eyebrow">Şu an katılabileceğin</div>
+              <div className="eyebrow">{t.featuredEyebrow}</div>
               <div className="verdict__line">
                 <span className="verdict__amount">
-                  {campaigns === null ? "Okunuyor…" : "Şimdilik yok"}
+                  {campaigns === null ? t.reading : t.noneYet}
                 </span>
               </div>
-              <div className="verdict__why">
-                Açık bir kampanya olduğunda burada görünür — kalan süresi, toplanan tutarı ve
-                katılan kişi sayısıyla.
-              </div>
+              <div className="verdict__why">{t.noneNote}</div>
             </div>
           )}
         </motion.section>
@@ -106,51 +109,51 @@ export default function CampaignsPage({
         <motion.div {...fadeUp(0.08)}>
           <section className="panel ledger">
             <div className="ledger__head">
-              <div className="eyebrow">Bütün kampanyalar</div>
+              <div className="eyebrow">{t.allCampaigns}</div>
               <div className="ledger__counts">
                 <span className="count">
                   <i className="mark mark--ok" />
-                  {open} açık
+                  {open} {t.open}
                 </span>
                 <span className="count">
                   <i className="mark mark--no" />
-                  {closed} kapandı
+                  {closed} {t.closed}
                 </span>
               </div>
             </div>
 
             <div className="ledger__row ledger__row--camp ledger__row--head">
-              <span className="eyebrow">Kalan</span>
-              <span className="eyebrow">Durum</span>
-              <span className="eyebrow">Kampanya</span>
+              <span className="eyebrow">{t.colLeft}</span>
+              <span className="eyebrow">{t.colStatus}</span>
+              <span className="eyebrow">{t.colCampaign}</span>
               <span className="eyebrow sm-hide" style={{ textAlign: "right" }}>
-                Toplanan
+                {t.colRaised}
               </span>
             </div>
 
             {!campaigns || campaigns.length === 0 ? (
               <div className="ledger__empty">
-                {campaigns === null ? "Zincirden okunuyor…" : "Henüz kampanya yok."}
+                {campaigns === null ? t.readingChain : t.noCampaigns}
               </div>
             ) : (
-              campaigns.map((c) => {
-                const v = verdictOf(c);
+              campaigns.map((camp) => {
+                const v = verdictOf(camp, c.verdict);
                 return (
                   <div
-                    key={String(c.id)}
-                    className={`ledger__row ledger__row--camp${c.secondsLeft > 0 ? "" : " ledger__row--quiet"}`}
-                    onClick={() => onOpen(c.id)}
+                    key={String(camp.id)}
+                    className={`ledger__row ledger__row--camp${camp.secondsLeft > 0 ? "" : " ledger__row--quiet"}`}
+                    onClick={() => onOpen(camp.id)}
                     role="button"
                     tabIndex={0}
-                    onKeyDown={(e) => e.key === "Enter" && onOpen(c.id)}
+                    onKeyDown={(e) => e.key === "Enter" && onOpen(camp.id)}
                   >
-                    <span className="ledger__when">{timeLeft(c.secondsLeft)}</span>
+                    <span className="ledger__when">{timeLeft(camp.secondsLeft, c.format)}</span>
                     <span className={`ledger__kind${v.kind === "no" ? " is-no" : ""}`}>{v.text}</span>
-                    <span className="ledger__what" title={c.title}>
-                      {c.title}
+                    <span className="ledger__what" title={camp.title}>
+                      {camp.title}
                     </span>
                     <span className="ledger__amt sm-hide">
-                      {fmtUsdc(c.total)} / {fmtUsdc(c.goal)}
+                      {fmtUsdc(camp.total, c.format.locale)} / {fmtUsdc(camp.goal, c.format.locale)}
                     </span>
                   </div>
                 );
@@ -162,26 +165,20 @@ export default function CampaignsPage({
 
       <div className="page__side">
         <motion.section className="panel panel--pad" {...fadeUp(0.06)}>
-          <div className="eyebrow">Nasıl katılırım</div>
+          <div className="eyebrow">{t.howToJoin}</div>
           <div className="steps" style={{ marginTop: 14 }}>
-            <div className="step">
-              <span className="step__n">1</span>
-              <div style={{ fontSize: 13.5 }}>Bir kampanya seç, ne kadar TL göndereceğini yaz.</div>
-            </div>
-            <div className="step">
-              <span className="step__n">2</span>
-              <div style={{ fontSize: 13.5 }}>Verilen IBAN'a, sana özel açıklama koduyla havale yap.</div>
-            </div>
-            <div className="step">
-              <span className="step__n">3</span>
-              <div style={{ fontSize: 13.5 }}>Tutmazsa paran ve bonus payın kendiliğinden döner.</div>
-            </div>
+            {t.joinSteps.map((step, i) => (
+              <div className="step" key={i}>
+                <span className="step__n">{i + 1}</span>
+                <div style={{ fontSize: 13.5 }}>{step}</div>
+              </div>
+            ))}
           </div>
         </motion.section>
 
         <motion.section className="panel panel--pad" {...fadeUp(0.1)}>
           <div className="panel__head">
-            <div className="eyebrow">Kurallar</div>
+            <div className="eyebrow">{t.rules}</div>
             <a
               className="linkbtn"
               style={{ whiteSpace: "nowrap" }}
@@ -193,20 +190,20 @@ export default function CampaignsPage({
             </a>
           </div>
           <div className="panel__kv">
-            <span>Bonus</span>
-            <span style={{ color: "var(--ink)" }}>baştan kilitli</span>
+            <span>{t.ruleBonus}</span>
+            <span style={{ color: "var(--ink)" }}>{t.ruleBonusValue}</span>
           </div>
           <div className="panel__kv">
-            <span>İade</span>
-            <span style={{ color: "var(--ink)" }}>imza istemez</span>
+            <span>{t.ruleRefund}</span>
+            <span style={{ color: "var(--ink)" }}>{t.ruleRefundValue}</span>
           </div>
           <div className="panel__kv">
-            <span>Aynı havale</span>
-            <span style={{ color: "var(--ink)" }}>bir kez sayılır</span>
+            <span>{t.ruleOnce}</span>
+            <span style={{ color: "var(--ink)" }}>{t.ruleOnceValue}</span>
           </div>
           <div style={{ marginTop: 16 }}>
             <button className="btn btn--ghost" onClick={onNew} type="button">
-              Kampanya aç
+              {t.create}
             </button>
           </div>
         </motion.section>

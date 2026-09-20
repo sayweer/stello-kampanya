@@ -5,15 +5,14 @@
 import type { ReactNode } from "react";
 
 import { useWallet } from "@/lib/hooks";
+import { useCopy } from "@/lib/copy/context";
+import LangSwitch from "../LangSwitch";
 import { shortAddr } from "./format";
 
 export type AppPage = "campaigns" | "new";
 
-const NAV: Record<AppPage, { label: string; icon: string }> = {
-  campaigns: { label: "Kampanyalar", icon: "◈" },
-  new: { label: "Kampanya aç", icon: "+" },
-};
 const APP_PAGES: AppPage[] = ["campaigns", "new"];
+const ICON: Record<AppPage, string> = { campaigns: "◈", new: "+" };
 
 export default function AppShell({
   page,
@@ -25,6 +24,8 @@ export default function AppShell({
   children: ReactNode;
 }) {
   const { address } = useWallet();
+  const { shell } = useCopy();
+  const label: Record<AppPage, string> = { campaigns: shell.campaigns, new: shell.create };
 
   return (
     <div className="shell">
@@ -40,27 +41,27 @@ export default function AppShell({
               onClick={() => onGo(p)}
               type="button"
             >
-              <span className="shell__icon">{NAV[p].icon}</span> {NAV[p].label}
+              <span className="shell__icon">{ICON[p]}</span> {label[p]}
             </button>
           ))}
         </nav>
         <div className="shell__foot">
-          <div className="shell__testnet">⚠ Test ağı — test parası, gerçek para değil.</div>
+          <div className="shell__testnet">{shell.testnet}</div>
           <a
             className="shell__docs"
             href="https://github.com/sayweer/stello#readme"
             target="_blank"
             rel="noreferrer"
           >
-            Nasıl çalışıyor ↗
+            {shell.docs}
           </a>
         </div>
       </aside>
 
       <div className="shell__main">
         <header className="shell__top">
-          {/* Left stays empty until there is something to switch between, as in the reference. */}
-          <span />
+          {/* Left carries the language, so it is reachable from inside the app too. */}
+          <LangSwitch className="shell__lang" />
           {address ? (
             <button className="anav__chip" onClick={() => onGo("campaigns")} type="button">
               <i className="anav__dot" /> {shortAddr(address)}
@@ -72,7 +73,7 @@ export default function AppShell({
               onClick={() => onGo(page === "new" ? "campaigns" : "new")}
               type="button"
             >
-              {page === "new" ? "Kampanyalar" : "Kampanya aç"}
+              {page === "new" ? shell.campaigns : shell.create}
             </button>
           )}
         </header>
@@ -87,8 +88,8 @@ export default function AppShell({
             onClick={() => onGo(p)}
             type="button"
           >
-            <span className="shell__icon">{NAV[p].icon}</span>
-            {NAV[p].label}
+            <span className="shell__icon">{ICON[p]}</span>
+            {label[p]}
           </button>
         ))}
       </nav>

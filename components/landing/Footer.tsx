@@ -1,20 +1,24 @@
+"use client";
+
 import { config, fromStroops } from "stello-sdk";
 import { campaignConfig, type CampaignView } from "@/lib/campaign";
 
 import StelloMark from "../StelloMark";
+import { useCopy } from "@/lib/copy/context";
 
 const EXPLORER = "https://stellar.expert/explorer/testnet";
 const REPO = "https://github.com/sayweer/stello";
 
 /** The footer carries the trust apparatus: a product that says "don't trust us, check the
  *  chain" has to say where to check. */
-const ON_CHAIN = [
-  { label: "Yönlendirici kontrat", id: config.routerId },
-  { label: "Kampanya kontratı", id: campaignConfig.campaignId },
-  { label: "İniş hesabı", id: config.landing, kind: "account" },
-];
 
 export default function Footer({ campaigns }: { campaigns: CampaignView[] | null }) {
+  const { footer: f } = useCopy();
+  const onChain = [
+    { label: f.router, id: config.routerId },
+    { label: f.campaignContract, id: campaignConfig.campaignId },
+    { label: f.landing, id: config.landing, kind: "account" },
+  ];
   const raised = (campaigns ?? []).reduce((sum, c) => sum + c.total, 0n);
 
   return (
@@ -26,35 +30,33 @@ export default function Footer({ campaigns }: { campaigns: CampaignView[] | null
               <StelloMark size={18} />
               Stello
             </strong>
-            <p className="lp__footer-line">
-              Banka havalesi, kontrat çağrısı olur — kuralların bir sözde değil, kontratta durur.
-            </p>
+            <p className="lp__footer-line">{f.line}</p>
           </div>
 
           <div className="lp__footer-cols">
             <div>
-              <div className="lp__footer-h">Ürün</div>
+              <div className="lp__footer-h">{f.product}</div>
               <a className="lp__link" href="#campaigns">
-                Kampanyalar
+                {f.campaigns}
               </a>
               <a className="lp__link" href="#new">
-                Kampanya aç
+                {f.create}
               </a>
             </div>
 
             <div>
-              <div className="lp__footer-h">Kaynaklar</div>
+              <div className="lp__footer-h">{f.resources}</div>
               <a className="lp__link" href={REPO} target="_blank" rel="noreferrer">
                 GitHub ↗
               </a>
               <a className="lp__link" href={`${REPO}#readme`} target="_blank" rel="noreferrer">
-                Mimari ve güven modeli ↗
+                {f.architecture}
               </a>
             </div>
 
             <div>
-              <div className="lp__footer-h">Zincirde</div>
-              {ON_CHAIN.map((c) => (
+              <div className="lp__footer-h">{f.onChain}</div>
+              {onChain.map((c) => (
                 <a
                   className="lp__link"
                   key={c.label}
@@ -71,18 +73,18 @@ export default function Footer({ campaigns }: { campaigns: CampaignView[] | null
         </div>
 
         <div className="lp__footer-row" style={{ marginTop: 30 }}>
-          <span className="lp__badge">Stellar Testnet</span>
-          <span>Açık kaynak, her satırı okunabilir.</span>
+          <span className="lp__badge">{f.badge}</span>
+          <span>{f.openSource}</span>
           <span>
-            {campaigns ? campaigns.length : "—"} kampanya ·{" "}
-            {campaigns ? fromStroops(raised) : "—"} USDC taahhüt — hepsi yukarıdan kontrol
-            edilebilir.
+            {f.totals
+              .replace("%c", campaigns ? String(campaigns.length) : "—")
+              .replace("%a", campaigns ? fromStroops(raised) : "—")}
           </span>
         </div>
 
         <div className="lp__footer-row" style={{ marginTop: 14 }}>
-          <span>Seyit Ali Değirmen tarafından yapıldı</span>
-          <span>Stellar Pro Hackathon · İstanbul, Eylül 2026</span>
+          <span>{f.author}</span>
+          <span>{f.event}</span>
         </div>
       </div>
     </footer>

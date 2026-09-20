@@ -6,6 +6,8 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
+import { useCopy } from "@/lib/copy/context";
+
 const EASE = [0.2, 0.7, 0.3, 1] as const;
 
 export default function BottomSheet({
@@ -20,6 +22,7 @@ export default function BottomSheet({
   children: React.ReactNode;
 }) {
   const reduce = useReducedMotion();
+  const { shell } = useCopy();
 
   useEffect(() => {
     if (!open) return;
@@ -57,7 +60,7 @@ export default function BottomSheet({
             <div style={grabber} />
             <div style={titleRow}>
               <span style={titleStyle}>{title}</span>
-              <button style={closeBtn} onClick={onClose} type="button" aria-label="Close">
+              <button style={closeBtn} onClick={onClose} type="button" aria-label={shell.close}>
                 ✕
               </button>
             </div>

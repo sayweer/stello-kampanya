@@ -6,6 +6,8 @@ import type { CampaignView } from "@/lib/campaign";
 import Words from "./Words";
 import { useTheme } from "./useTheme";
 import StelloMark from "../StelloMark";
+import LangSwitch from "../LangSwitch";
+import { useCopy } from "@/lib/copy/context";
 
 /** The brand name split where the curtain parts. Each half is pinned to the inner edge of its
  *  panel, so as the gap opens the two halves are carried off screen with it. */
@@ -37,6 +39,7 @@ export default function Hero({
   onCreate: () => void;
 }) {
   const { theme, toggle } = useTheme();
+  const { hero, nav } = useCopy();
 
   const raised = (campaigns ?? []).reduce((sum, c) => sum + c.total, 0n);
   const people = (campaigns ?? []).reduce((sum, c) => sum + c.pledgers, 0);
@@ -63,12 +66,14 @@ export default function Hero({
           </span>
 
           <span className="lp__nav-mid">
-            {[
-              ["Kanıt", "#proof"],
-              ["Nasıl çalışır", "#how"],
-              ["Güvenceler", "#guarantees"],
-              ["Kriptosuz", "#privacy"],
-            ].map(([label, href]) => (
+            {(
+              [
+                [nav.proof, "#proof"],
+                [nav.how, "#how"],
+                [nav.guarantees, "#guarantees"],
+                [nav.privacy, "#privacy"],
+              ] as const
+            ).map(([label, href]) => (
               <span className="lp__nav-mask" key={href}>
                 <a className="lp__nav-link" href={href}>
                   {label}
@@ -88,13 +93,16 @@ export default function Hero({
                 GitHub
               </a>
             </span>
+            <span className="lp__nav-mask lp__nav-aux">
+              <LangSwitch className="lp__nav-link" />
+            </span>
             <span className="lp__nav-mask">
               <button
                 className="lp__nav-link lp__theme"
                 onClick={(e) => toggle(e)}
                 type="button"
-                aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
-                title={theme === "dark" ? "Açık" : "Koyu"}
+                aria-label={theme === "dark" ? nav.toLight : nav.toDark}
+                title={theme === "dark" ? nav.light : nav.dark}
               >
                 {theme === "dark" ? "☀" : "☾"}
               </button>
@@ -108,7 +116,7 @@ export default function Hero({
                   </button>
                 ) : (
                   <button className="anav__cta" onClick={onEnter} type="button">
-                    Kampanyalar
+                    {nav.campaigns}
                   </button>
                 )}
               </span>
@@ -120,32 +128,29 @@ export default function Hero({
       <div className="lp__hero-bottom">
         <div className="lp__rule" />
         <h1>
-          <Words text="Hedef tutmazsa, kazanan sen olursun." mark="kazanan sen" />
+          <Words text={hero.headline} mark={hero.mark} />
         </h1>
 
         <div className="lp__rise-box">
-          <p className="lp__lede lp__rise">
-            Banka uygulamandan TL gönder, katıl — cüzdan yok, kripto yok. Tutarsa iş olur; tutmazsa
-            paran ve organizatörün baştan kilitlediği bonustan payın kendiliğinden geri döner.
-          </p>
+          <p className="lp__lede lp__rise">{hero.lede}</p>
         </div>
 
         <div className="lp__rise-box">
           <div className="lp__actions lp__rise">
             {address ? (
               <button className="lp__cta" onClick={onEnter} type="button">
-                Kampanyalarına dön
-                <span className="lp__cta-hint">bu tarayıcı seni hatırlıyor</span>
+                {hero.back}
+                <span className="lp__cta-hint">{hero.backHint}</span>
               </button>
             ) : (
               <>
                 <button className="lp__cta" onClick={onEnter} type="button">
-                  Bir kampanyaya katıl
-                  <span className="lp__cta-hint">IBAN'a havale yeter</span>
+                  {hero.join}
+                  <span className="lp__cta-hint">{hero.joinHint}</span>
                 </button>
                 <button className="lp__cta lp__cta--ghost" onClick={onCreate} type="button">
-                  Kampanya aç
-                  <span className="lp__cta-hint">bonusu sen kilitlersin</span>
+                  {hero.create}
+                  <span className="lp__cta-hint">{hero.createHint}</span>
                 </button>
               </>
             )}
@@ -158,15 +163,15 @@ export default function Hero({
         <div className="lp__rise-box">
           <div className="lp__counter lp__rise">
             <span>
-              <b>{campaigns ? campaigns.length : "—"}</b> kampanya açıldı
+              <b>{campaigns ? campaigns.length : "—"}</b> {hero.countCampaigns}
             </span>
             <span>
-              <b>{campaigns ? fromStroops(raised) : "—"}</b> USDC taahhüt edildi
+              <b>{campaigns ? fromStroops(raised) : "—"}</b> {hero.countPledged}
             </span>
             <span>
-              <b>{campaigns ? people : "—"}</b> kişi katıldı
+              <b>{campaigns ? people : "—"}</b> {hero.countPeople}
             </span>
-            <span className="lp__award">Stellar testnet · zincirden canlı</span>
+            <span className="lp__award">{hero.award}</span>
           </div>
         </div>
       </div>
